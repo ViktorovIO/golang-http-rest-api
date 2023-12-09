@@ -5,3 +5,6 @@ build:
 
 dev-config:
 	cp ./config/server.toml.local ./config/server.toml
+
+test:
+	go test -v -race ./...
