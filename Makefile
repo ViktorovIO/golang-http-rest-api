@@ -1,6 +1,7 @@
-.PHONY: build
+.PHONY: dev-config build
 
 build:
 	go build -v ./cmd/server
 
-.DEFAULT_GOAL := build
+dev-config:
+	cp ./config/server.toml.local ./config/server.toml
