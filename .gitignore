@@ -1,3 +1,4 @@
 /.idea/
 /server
 /config/server.toml
+/docker/postgres/db-data

@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  pgsql:
+    container_name: pgsql
+    build:
+      dockerfile: ./docker/postgres/Dockerfile
+      context: .
+    restart: always
+    environment:
+      POSTGRES_DB: restapi_dev
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: dev123
+      TZ: Europe/Moscow
+      PGTZ: Europe/Moscow
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/db-data:/var/lib/postgresql/data:rw
+
+  server:
+    container_name: golang-server
+    restart: unless-stopped
+    build:
+      dockerfile: ./docker/golang/Dockerfile
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
