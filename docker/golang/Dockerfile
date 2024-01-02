@@ -1,20 +1,47 @@
-FROM golang:1.20.3
+FROM ubuntu:18.04
 
-RUN mkdir -p /app
+# Install necessary packages
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+        build-essential
 
-WORKDIR /app
+RUN apt-get update -y
+RUN apt-get install -y libx11-dev
+
+# Download and install Go
+ENV GO_VERSION 1.20.6
+RUN curl -LO "https://go.dev/dl/go1.20.6.linux-amd64.tar.gz" && \
+    tar -C /usr/local -xzf "go1.20.6.linux-amd64.tar.gz" && \
+    rm "go1.20.6.linux-amd64.tar.gz"
+
+# Set Go environment variables
+ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOPATH="/go"
+ENV GOBIN="/go/bin"
+
+# Create a directory for Go workspace
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+
+# Set CGO_ENABLED to enable cgo
+RUN go env -w CGO_ENABLED=1
+
+# Set the working directory
+WORKDIR $GOPATH/src
 
 COPY . .
 
-ENV GOPATH /
+RUN ls
+
 # Download Go modules
 COPY go.mod go.sum ./
 RUN go mod download
 
 # Build
-RUN env GOOS=linux GOARCH=amd64 go build -v ./cmd/server
+RUN go build -v $GOPATH/src/cmd/server
 
-EXPOSE 8080
+# Print Go version to verify the installation
+RUN go version
 
-# Run
-CMD ["/app/server"]
+# By default, run bash for interactive access (optional)
+CMD ["./server"]

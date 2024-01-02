@@ -12,6 +12,9 @@ dev-config:
 
 # Docker
 
+up:
+	docker compose up -d
+
 run:
 	docker compose exec -u www-data golang-server ./server
 

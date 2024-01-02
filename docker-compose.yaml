@@ -20,7 +20,6 @@ services:
 
   server:
     container_name: golang-server
-    restart: unless-stopped
     build:
       dockerfile: ./docker/golang/Dockerfile
       context: .
